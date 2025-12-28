@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synesthesia Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Synesthesia Simulator</h1>
+            <p class="subtitle">Experience content through multiple senses</p>
+        </header>
+
+        <main>
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="input-group">
+                    <label for="content-input">Enter Text, Color (#hex), or Number:</label>
+                    <input type="text" id="content-input" placeholder="Type here... (e.g., 'Hello', '#FF5733', '42')">
+                    <button id="experience-btn">Experience</button>
+                </div>
+
+                <!-- Mapping Controls -->
+                <div class="controls">
+                    <h3>Adjust Mappings</h3>
+                    <div class="slider-group">
+                        <label for="volume-slider">Volume:</label>
+                        <input type="range" id="volume-slider" min="0" max="100" value="50">
+                        <span id="volume-value">50%</span>
+                    </div>
+                    <div class="slider-group">
+                        <label for="speed-slider">Animation Speed:</label>
+                        <input type="range" id="speed-slider" min="1" max="10" value="5">
+                        <span id="speed-value">5x</span>
+                    </div>
+                    <div class="slider-group">
+                        <label for="intensity-slider">Visual Intensity:</label>
+                        <input type="range" id="intensity-slider" min="1" max="100" value="70">
+                        <span id="intensity-value">70%</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visualization Section -->
+            <section class="visualization-section">
+                <div class="display-area" id="display-area">
+                    <canvas id="visualization-canvas"></canvas>
+                    <div class="content-preview" id="content-preview">
+                        <span class="placeholder-text">Your content will appear here</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Content Grid -->
+                <div class="content-grid" id="content-grid">
+                    <div class="grid-item" data-type="text" data-value="A">A</div>
+                    <div class="grid-item" data-type="text" data-value="B">B</div>
+                    <div class="grid-item" data-type="text" data-value="C">C</div>
+                    <div class="grid-item" data-type="color" data-value="#FF0000" style="background-color: #FF0000;"></div>
+                    <div class="grid-item" data-type="color" data-value="#00FF00" style="background-color: #00FF00;"></div>
+                    <div class="grid-item" data-type="color" data-value="#0000FF" style="background-color: #0000FF;"></div>
+                    <div class="grid-item" data-type="number" data-value="1">1</div>
+                    <div class="grid-item" data-type="number" data-value="7">7</div>
+                    <div class="grid-item" data-type="number" data-value="42">42</div>
+                </div>
+            </section>
+
+            <!-- Status Display -->
+            <section class="status-section">
+                <div id="status-display">
+                    <p>Detected Type: <span id="detected-type">-</span></p>
+                    <p>Current Frequency: <span id="current-frequency">-</span></p>
+                    <p>Active Effect: <span id="active-effect">-</span></p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Synesthesia Simulator | Multi-sensory web experience</p>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
