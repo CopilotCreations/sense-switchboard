@@ -15,7 +15,11 @@ from backend.server import create_app
 
 @pytest.fixture
 def client():
-    """Create a test client for the Flask application."""
+    """Create a test client for the Flask application.
+
+    Yields:
+        FlaskClient: A test client instance for making requests to the app.
+    """
     app = create_app(static_folder=os.path.join(os.path.dirname(__file__), '..', 'src', 'frontend'))
     app.config['TESTING'] = True
     with app.test_client() as client:
@@ -26,12 +30,20 @@ class TestHealthEndpoint:
     """Tests for the health check endpoint."""
     
     def test_health_returns_200(self, client):
-        """Test health endpoint returns 200."""
+        """Test health endpoint returns 200.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.get('/api/health')
         assert response.status_code == 200
     
     def test_health_returns_status(self, client):
-        """Test health endpoint returns healthy status."""
+        """Test health endpoint returns healthy status.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.get('/api/health')
         data = json.loads(response.data)
         assert data['status'] == 'healthy'
@@ -43,7 +55,11 @@ class TestDetectEndpoint:
     """Tests for the detect content endpoint."""
     
     def test_detect_color(self, client):
-        """Test detecting a color."""
+        """Test detecting a color.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/detect',
                               data=json.dumps({'content': '#FF0000'}),
                               content_type='application/json')
@@ -52,7 +68,11 @@ class TestDetectEndpoint:
         assert data['value'] == '#FF0000'
     
     def test_detect_number(self, client):
-        """Test detecting a number."""
+        """Test detecting a number.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/detect',
                               data=json.dumps({'content': '42'}),
                               content_type='application/json')
@@ -61,7 +81,11 @@ class TestDetectEndpoint:
         assert data['value'] == 42.0
     
     def test_detect_text(self, client):
-        """Test detecting text."""
+        """Test detecting text.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/detect',
                               data=json.dumps({'content': 'Hello'}),
                               content_type='application/json')
@@ -70,7 +94,11 @@ class TestDetectEndpoint:
         assert data['value'] == 'Hello'
     
     def test_detect_empty(self, client):
-        """Test detecting empty content."""
+        """Test detecting empty content.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/detect',
                               data=json.dumps({'content': ''}),
                               content_type='application/json')
@@ -78,7 +106,11 @@ class TestDetectEndpoint:
         assert data['type'] == 'unknown'
     
     def test_detect_no_body(self, client):
-        """Test detect with no request body."""
+        """Test detect with no request body.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/detect',
                               data=json.dumps({}),
                               content_type='application/json')
@@ -90,7 +122,11 @@ class TestMapTextEndpoint:
     """Tests for the map text endpoint."""
     
     def test_map_text_basic(self, client):
-        """Test basic text mapping."""
+        """Test basic text mapping.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/text',
                               data=json.dumps({'text': 'ABC'}),
                               content_type='application/json')
@@ -100,7 +136,11 @@ class TestMapTextEndpoint:
         assert 'total_duration' in data
     
     def test_map_text_with_scale(self, client):
-        """Test text mapping with custom scale."""
+        """Test text mapping with custom scale.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/text',
                               data=json.dumps({'text': 'A', 'scale': 'major'}),
                               content_type='application/json')
@@ -108,7 +148,11 @@ class TestMapTextEndpoint:
         assert data['scale'] == 'major'
     
     def test_map_text_empty(self, client):
-        """Test mapping empty text."""
+        """Test mapping empty text.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/text',
                               data=json.dumps({'text': ''}),
                               content_type='application/json')
@@ -120,7 +164,11 @@ class TestMapColorEndpoint:
     """Tests for the map color endpoint."""
     
     def test_map_color_basic(self, client):
-        """Test basic color mapping."""
+        """Test basic color mapping.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/color',
                               data=json.dumps({'color': '#FF0000'}),
                               content_type='application/json')
@@ -131,7 +179,11 @@ class TestMapColorEndpoint:
         assert 'rgb' in data
     
     def test_map_color_includes_complementary(self, client):
-        """Test color mapping includes complementary."""
+        """Test color mapping includes complementary.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/color',
                               data=json.dumps({'color': '#FF0000'}),
                               content_type='application/json')
@@ -139,7 +191,11 @@ class TestMapColorEndpoint:
         assert 'complementary' in data
     
     def test_map_color_invalid(self, client):
-        """Test mapping invalid color."""
+        """Test mapping invalid color.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/color',
                               data=json.dumps({'color': 'invalid'}),
                               content_type='application/json')
@@ -151,7 +207,11 @@ class TestMapNumberEndpoint:
     """Tests for the map number endpoint."""
     
     def test_map_number_basic(self, client):
-        """Test basic number mapping."""
+        """Test basic number mapping.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/number',
                               data=json.dumps({'number': 42}),
                               content_type='application/json')
@@ -162,7 +222,11 @@ class TestMapNumberEndpoint:
         assert 'visual' in data
     
     def test_map_number_negative(self, client):
-        """Test mapping negative number."""
+        """Test mapping negative number.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/number',
                               data=json.dumps({'number': -10}),
                               content_type='application/json')
@@ -170,7 +234,11 @@ class TestMapNumberEndpoint:
         assert data['is_negative'] is True
     
     def test_map_number_invalid(self, client):
-        """Test mapping invalid number."""
+        """Test mapping invalid number.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/number',
                               data=json.dumps({'number': 'not a number'}),
                               content_type='application/json')
@@ -181,7 +249,11 @@ class TestMapAutoEndpoint:
     """Tests for the auto-mapping endpoint."""
     
     def test_auto_map_text(self, client):
-        """Test auto-mapping text."""
+        """Test auto-mapping text.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/auto',
                               data=json.dumps({'content': 'Hello'}),
                               content_type='application/json')
@@ -190,7 +262,11 @@ class TestMapAutoEndpoint:
         assert 'mappings' in data['mapping']
     
     def test_auto_map_color(self, client):
-        """Test auto-mapping color."""
+        """Test auto-mapping color.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/auto',
                               data=json.dumps({'content': '#FF0000'}),
                               content_type='application/json')
@@ -199,7 +275,11 @@ class TestMapAutoEndpoint:
         assert 'frequency' in data['mapping']
     
     def test_auto_map_number(self, client):
-        """Test auto-mapping number."""
+        """Test auto-mapping number.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/auto',
                               data=json.dumps({'content': '42'}),
                               content_type='application/json')
@@ -208,7 +288,11 @@ class TestMapAutoEndpoint:
         assert 'pattern' in data['mapping']
     
     def test_auto_map_unknown(self, client):
-        """Test auto-mapping unknown content."""
+        """Test auto-mapping unknown content.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/map/auto',
                               data=json.dumps({'content': ''}),
                               content_type='application/json')
@@ -221,7 +305,11 @@ class TestPreferencesEndpoints:
     """Tests for the preferences endpoints."""
     
     def test_get_preferences_default(self, client):
-        """Test getting default preferences."""
+        """Test getting default preferences.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.get('/api/preferences')
         data = json.loads(response.data)
         assert 'volume' in data
@@ -229,7 +317,11 @@ class TestPreferencesEndpoints:
         assert 'intensity' in data
     
     def test_set_preferences(self, client):
-        """Test setting preferences."""
+        """Test setting preferences.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/preferences',
                               data=json.dumps({'volume': 80}),
                               content_type='application/json',
@@ -238,7 +330,11 @@ class TestPreferencesEndpoints:
         assert data['volume'] == 80
     
     def test_get_preferences_with_user_id(self, client):
-        """Test getting preferences with user ID."""
+        """Test getting preferences with user ID.
+
+        Args:
+            client: Flask test client fixture.
+        """
         # First set preferences
         client.post('/api/preferences',
                    data=json.dumps({'volume': 90}),
@@ -252,7 +348,11 @@ class TestPreferencesEndpoints:
         assert data['volume'] == 90
     
     def test_add_preset(self, client):
-        """Test adding a preset."""
+        """Test adding a preset.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.post('/api/preferences/preset',
                               data=json.dumps({'name': 'Test Preset'}),
                               content_type='application/json',
@@ -266,17 +366,29 @@ class TestStaticFiles:
     """Tests for static file serving."""
     
     def test_index_page(self, client):
-        """Test that index page is served."""
+        """Test that index page is served.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.get('/')
         assert response.status_code == 200
         assert b'Synesthesia Simulator' in response.data
     
     def test_css_file(self, client):
-        """Test that CSS file is served."""
+        """Test that CSS file is served.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.get('/style.css')
         assert response.status_code == 200
     
     def test_js_file(self, client):
-        """Test that JS file is served."""
+        """Test that JS file is served.
+
+        Args:
+            client: Flask test client fixture.
+        """
         response = client.get('/main.js')
         assert response.status_code == 200

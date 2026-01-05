@@ -25,7 +25,14 @@ from backend.server import create_app
 
 
 def main():
-    """Main entry point for the application."""
+    """Main entry point for the application.
+
+    Parses command-line arguments, creates the Flask application instance,
+    and starts the web server. Handles graceful shutdown on keyboard interrupt.
+
+    Raises:
+        SystemExit: When the server is stopped via Ctrl+C (exit code 0).
+    """
     parser = argparse.ArgumentParser(
         description='Synesthesia Simulator - Multi-sensory web experience',
         formatter_class=argparse.RawDescriptionHelpFormatter,

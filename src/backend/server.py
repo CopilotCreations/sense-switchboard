@@ -43,7 +43,14 @@ class ContentMapper:
         self.scale_name = scale
     
     def _get_scale(self, scale_name: str) -> List[int]:
-        """Get the scale intervals for the given scale name."""
+        """Get the scale intervals for the given scale name.
+
+        Args:
+            scale_name: Name of the musical scale ('pentatonic', 'major', 'minor').
+
+        Returns:
+            List of semitone intervals for the specified scale.
+        """
         scales = {
             'pentatonic': self.PENTATONIC_SCALE,
             'major': self.MAJOR_SCALE,
@@ -52,7 +59,11 @@ class ContentMapper:
         return scales.get(scale_name, self.PENTATONIC_SCALE)
     
     def set_scale(self, scale_name: str) -> None:
-        """Set the musical scale to use."""
+        """Set the musical scale to use.
+
+        Args:
+            scale_name: Name of the musical scale ('pentatonic', 'major', 'minor').
+        """
         self.scale = self._get_scale(scale_name)
         self.scale_name = scale_name
     
@@ -119,7 +130,14 @@ class ContentMapper:
         return result
     
     def _frequency_to_note(self, frequency: float) -> str:
-        """Convert a frequency to a note name."""
+        """Convert a frequency to a note name.
+
+        Args:
+            frequency: Frequency in Hz.
+
+        Returns:
+            Note name with octave (e.g., 'A4', 'C#3') or 'rest' if frequency is zero.
+        """
         notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
         if frequency <= 0:
             return 'rest'
@@ -233,7 +251,14 @@ class ContentMapper:
         }
     
     def _get_complementary_color(self, hex_color: str) -> str:
-        """Get the complementary color."""
+        """Get the complementary color.
+
+        Args:
+            hex_color: Hex color string (with or without #).
+
+        Returns:
+            Complementary color as a hex string (e.g., '#ff00ff').
+        """
         rgb = self.hex_to_rgb(hex_color)
         if not rgb:
             return '#000000'
@@ -339,7 +364,12 @@ class UserPreferences:
         self.preferences = self._load_preferences()
     
     def _load_preferences(self) -> Dict[str, Any]:
-        """Load preferences from file."""
+        """Load preferences from file.
+
+        Returns:
+            Dictionary of user preferences, or empty dict if file doesn't exist
+            or is invalid.
+        """
         if os.path.exists(self.storage_file):
             try:
                 with open(self.storage_file, 'r') as f:
@@ -349,7 +379,11 @@ class UserPreferences:
         return {}
     
     def _save_preferences(self) -> None:
-        """Save preferences to file."""
+        """Save preferences to file.
+
+        Writes the current preferences dictionary to the storage file as JSON.
+        Silently fails if the file cannot be written.
+        """
         try:
             with open(self.storage_file, 'w') as f:
                 json.dump(self.preferences, f, indent=2)
@@ -357,7 +391,14 @@ class UserPreferences:
             pass
     
     def _get_user_id(self, identifier: str) -> str:
-        """Generate a consistent user ID from an identifier."""
+        """Generate a consistent user ID from an identifier.
+
+        Args:
+            identifier: User identifier string (e.g., email, username).
+
+        Returns:
+            A 16-character SHA-256 hash of the identifier.
+        """
         return hashlib.sha256(identifier.encode()).hexdigest()[:16]
     
     def get_preferences(self, user_id: str) -> Dict[str, Any]:
@@ -447,12 +488,23 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/')
     def index():
-        """Serve the main index.html file."""
+        """Serve the main index.html file.
+
+        Returns:
+            The index.html file from the static folder.
+        """
         return send_from_directory(app.static_folder, 'index.html')
     
     @app.route('/<path:filename>')
     def static_files(filename):
-        """Serve static files."""
+        """Serve static files.
+
+        Args:
+            filename: Path to the requested static file.
+
+        Returns:
+            The requested file from the static folder.
+        """
         return send_from_directory(app.static_folder, filename)
     
     # ========================================================================
@@ -461,7 +513,13 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/detect', methods=['POST'])
     def detect_content():
-        """Detect content type from input."""
+        """Detect content type from input.
+
+        Expects JSON body with 'content' field.
+
+        Returns:
+            JSON with detected type ('text', 'color', 'number', 'unknown') and value.
+        """
         data = request.get_json() or {}
         content = data.get('content', '')
         result = content_mapper.detect_content_type(content)
@@ -469,7 +527,13 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/map/text', methods=['POST'])
     def map_text():
-        """Convert text to frequency mappings."""
+        """Convert text to frequency mappings.
+
+        Expects JSON body with 'text' and optional 'scale' fields.
+
+        Returns:
+            JSON with input text, scale, frequency mappings, and total duration.
+        """
         data = request.get_json() or {}
         text = data.get('text', '')
         scale = data.get('scale', 'pentatonic')
@@ -486,7 +550,14 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/map/color', methods=['POST'])
     def map_color():
-        """Convert color to sound parameters."""
+        """Convert color to sound parameters.
+
+        Expects JSON body with 'color' field (hex color string).
+
+        Returns:
+            JSON with frequency, waveform, volume modifier, RGB, HSL, and
+            complementary color.
+        """
         data = request.get_json() or {}
         color = data.get('color', '#000000')
         
@@ -497,7 +568,14 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/map/number', methods=['POST'])
     def map_number():
-        """Convert number to pattern parameters."""
+        """Convert number to pattern parameters.
+
+        Expects JSON body with 'number' field.
+
+        Returns:
+            JSON with frequency, pattern type, oscillator count, and visual
+            parameters. Returns 400 error if number is invalid.
+        """
         data = request.get_json() or {}
         try:
             number = float(data.get('number', 0))
@@ -511,7 +589,14 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/map/auto', methods=['POST'])
     def map_auto():
-        """Automatically detect and map content."""
+        """Automatically detect and map content.
+
+        Expects JSON body with 'content' field. Detects content type and
+        applies appropriate mapping.
+
+        Returns:
+            JSON with detected type and corresponding mapping result.
+        """
         data = request.get_json() or {}
         content = data.get('content', '')
         
@@ -540,14 +625,28 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/preferences', methods=['GET'])
     def get_preferences():
-        """Get user preferences."""
+        """Get user preferences.
+
+        Uses X-User-ID header for user identification.
+
+        Returns:
+            JSON with user preferences including volume, speed, intensity,
+            scale, and presets.
+        """
         user_id = request.headers.get('X-User-ID', 'default')
         prefs = user_prefs.get_preferences(user_id)
         return jsonify(prefs)
     
     @app.route('/api/preferences', methods=['POST'])
     def set_preferences():
-        """Set user preferences."""
+        """Set user preferences.
+
+        Uses X-User-ID header for user identification. Expects JSON body
+        with preference fields to update.
+
+        Returns:
+            JSON with updated user preferences.
+        """
         user_id = request.headers.get('X-User-ID', 'default')
         data = request.get_json() or {}
         prefs = user_prefs.set_preferences(user_id, data)
@@ -555,7 +654,14 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/preferences/preset', methods=['POST'])
     def add_preset():
-        """Add a user preset."""
+        """Add a user preset.
+
+        Uses X-User-ID header for user identification. Expects JSON body
+        with preset configuration. Maximum 10 presets per user.
+
+        Returns:
+            JSON with updated list of presets.
+        """
         user_id = request.headers.get('X-User-ID', 'default')
         data = request.get_json() or {}
         presets = user_prefs.add_preset(user_id, data)
@@ -567,7 +673,11 @@ def create_app(static_folder: Optional[str] = None) -> Flask:
     
     @app.route('/api/health')
     def health_check():
-        """Health check endpoint."""
+        """Health check endpoint.
+
+        Returns:
+            JSON with service status, version, and service name.
+        """
         return jsonify({
             'status': 'healthy',
             'version': '1.0.0',
